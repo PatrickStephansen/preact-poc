@@ -37,13 +37,13 @@ const effectMiddleware = (state, action, dispatch) => {
 };
 
 const reducer = (state, action) => {
-  effectMiddleware(state, action, state.dis);
+  effectMiddleware(state, action, state.__dispatch);
 
   switch (action.type) {
     case "addThingsNow":
       return { ...state, things: [...state.things, action.newThings] };
     case "dis":
-      return { ...state, dis: action.fn };
+      return { ...state, __dispatch: action.fn };
     default:
       return state;
   }
@@ -55,13 +55,12 @@ const StoreContext = ({ children }) => (
   </context.Provider>
 );
 const EffectWrapper = ({ children }) => {
-  const [{ dis }, dispatch] = useStore();
-  const localDispatch = action => dispatch(action);
+  const [{ __dispatch }, dispatch] = useStore();
   useEffect(() => {
-    dispatch({ type: "dis", fn: localDispatch });
+    dispatch({ type: "dis", fn: dispatch });
   }, []);
 
-  return dis && children;
+  return __dispatch && children;
 };
 
 const Testo = () => {
